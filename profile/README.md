@@ -1,12 +1,33 @@
-## Hi there 👋
+## Pipeline Status
 
-<!--
+### Backend Services (Python)
 
-**Here are some ideas to get you started:**
+| Service | CI/CD | PR Validation | Python |
+|---------|-------|---------------|--------|
+| gn-api-auth-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-auth-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-auth-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-auth-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-auth-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-data-processor-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-data-processor-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-data-processor-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-data-processor-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-data-processor-service/actions/workflows/pr-validation.yml) | 3.13 |
+| gn-api-email-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-email-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-email-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-email-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-email-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-geospatial-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-geospatial-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-geospatial-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-geospatial-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-geospatial-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-hub-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-hub-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-hub-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-hub-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-hub-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-message-bus-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-message-bus-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-message-bus-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-message-bus-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-message-bus-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-municipios-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-municipios-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-municipios-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-municipios-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-municipios-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-property-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-property-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-property-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-property-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-property-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-report-design-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-report-design-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-report-design-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-report-design-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-report-design-service/actions/workflows/pr-validation.yml) | 3.13 |
+| gn-api-report-portal-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-report-portal-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-report-portal-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-report-portal-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-report-portal-service/actions/workflows/pr-validation.yml) | 3.14 |
+| gn-api-tiles-service | [![CI/CD](https://github.com/GreenNexus-Core/gn-api-tiles-service/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-tiles-service/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-api-tiles-service/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-api-tiles-service/actions/workflows/pr-validation.yml) | 3.14 |
 
-🙋‍♀️ A short introduction - what is your organization all about?
-🌈 Contribution guidelines - how can the community get involved?
-👩‍💻 Useful resources - where can the community find your docs? Is there anything else the community should know?
-🍿 Fun facts - what does your team eat for breakfast?
-🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
--->
+### Shared Library (Python)
+
+| Library | CI/CD | PR Validation | Python |
+|---------|-------|---------------|--------|
+| gn-lib-commons | [![CI/CD](https://github.com/GreenNexus-Core/gn-lib-commons/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-lib-commons/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-lib-commons/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-lib-commons/actions/workflows/pr-validation.yml) | 3.13 |
+
+### Frontend Applications (React)
+
+| Application | CI/CD | PR Validation |
+|-------------|-------|---------------|
+| gn-web-admin-plataforma | [![CI/CD](https://github.com/GreenNexus-Core/gn-web-admin-plataforma/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-admin-plataforma/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-web-admin-plataforma/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-admin-plataforma/actions/workflows/pr-validation.yml) |
+| gn-web-data-processor | [![CI/CD](https://github.com/GreenNexus-Core/gn-web-data-processor/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-data-processor/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-web-data-processor/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-data-processor/actions/workflows/pr-validation.yml) |
+| gn-web-plataforma | [![CI/CD](https://github.com/GreenNexus-Core/gn-web-plataforma/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-plataforma/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-web-plataforma/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-plataforma/actions/workflows/pr-validation.yml) |
+| gn-web-report-design | [![CI/CD](https://github.com/GreenNexus-Core/gn-web-report-design/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-report-design/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-web-report-design/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-report-design/actions/workflows/pr-validation.yml) |
+| gn-web-slider | [![CI/CD](https://github.com/GreenNexus-Core/gn-web-slider/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-slider/actions/workflows/ci-cd.yml) | [![PR](https://github.com/GreenNexus-Core/gn-web-slider/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/GreenNexus-Core/gn-web-slider/actions/workflows/pr-validation.yml) |
