@@ -1,4 +1,4 @@
-## Pipeline Status
+## Pipeline Status | Green:Nexus
 
 ### Backend Services (Python 3.14)
 
