@@ -44,4 +44,8 @@
 
 ### Aplicações Core
 
+> gn-core-image-processor
+
 ### Command Line Interface
+
+> gn-cli-dataprocessor
