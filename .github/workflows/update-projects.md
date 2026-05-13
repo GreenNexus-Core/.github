@@ -1,5 +1,5 @@
 ---
-# Trigger - when should this workflow run?
+name: Update Projects 🚀
 on:
   workflow_dispatch:
   schedule: weekly on monday around 7 a.m. (UTC - 3)
