@@ -51,7 +51,7 @@
 | 3.4 | Monitoramento contínuo por assinatura | NTH→MH* | RF-80–81, RT-13 |
 | 3.5 | Grafo societário/UBO (recursive CTE sobre QSA) | NTH | — |
 | 3.6 | Relatório de ativo ambiental (carbono/PSA, saldo RL) | NTH | — |
-| 3.7 | Unificação cadastral em Postgres (aposentar views MSSQL) | DT | RT-12, DT-03 |
+| 3.7 | ~~Unificação cadastral em Postgres~~ → **promovido a must-have** (ver Trilha DETL D5; análise em `docs/avaliacao-gn-cli-dataprocessor.md` §4) | DT→MH | RT-12, DT-03 |
 | 3.8 | Painel de freshness/cobertura por fonte e UF | DT | DT-08 |
 
 \* vira must-have se o modelo de receita recorrente for priorizado.
@@ -66,6 +66,18 @@
 | 4.4 | Agente de aquisição — piloto 2–3 portais de certidão | NTH | Medir custo/sucesso vs scraper |
 | 4.5 | Investigação dirigida de red flags | NTH | Após 2.8 |
 | 4.6 | MCP B2B multi-tenant (agentes de bancos/seguradoras) | NTH | Tese de produto; após 4.1–4.3 |
+
+## 4b. Trilha DETL (gn-cli-dataprocessor — ver `docs/avaliacao-gn-cli-dataprocessor.md` §5.6)
+
+| # | Item | Tipo |
+|---|---|---|
+| D1 | Containerização total (tippecanoe na imagem) + ACA Jobs cron p/ domínios leves | QW |
+| D2 | Alertas de falha + dead-man's switch + painel freshness por fonte | MH |
+| D3 | Fan-out por fila (KEDA) p/ car_geo/sigef_geo em workload profile dedicado | MH |
+| D4 | GeoParquet raw + transform DuckDB/pyogrio + ingest PostGIS otimizado | MH |
+| D5 | Migração tabular MSSQL→PG + promote unificado (absorve item 3.7) | MH |
+| D6 | Supervisão agêntica (triagem de falhas → re-kick/issue/e-mail) | NTH |
+| D7 | Higiene: docs únicas, DDL→gn-db-scripts, gn_commons, Py 3.14, golden files + contract tests | DT |
 
 ## 5. Sequência sugerida (macro)
 
