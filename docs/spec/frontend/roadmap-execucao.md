@@ -67,7 +67,7 @@
 
 | ID | Atividade | Tam. | Pred. | Libera | Paralela com |
 |---|---|---|---|---|---|
-| BIL-1 | Interface `PaymentProvider` no BFF + decisão de gateway (Stripe vs nacional) + sandbox — **B-02** | M | B-02 | BIL-2..5 | ENT-2, RBC-* |
+| BIL-1 | Interface `PaymentProvider` no BFF + implementação **Stripe US** (decisão tomada — ver spec §9) + sandbox/test mode — **B-02** | M | B-02 | BIL-2..5 | ENT-2, RBC-* |
 | BIL-2 | Assinaturas: planos, ciclo, upgrade/downgrade com pró-rata, trial | G | BIL-1 | ENT-3, BIL-3 | ADM-2 |
 | BIL-3 | Checkout self-service + métodos de pagamento + página Plano & Faturamento | M | BIL-2, ENT-1 | — | BIL-4 |
 | BIL-4 | Metering de uso (eventos B-07) + invoice items (HIGH LLM, excedentes) | M | BIL-1, B-07 | PRM-3, ENT-3 | BIL-3 |
