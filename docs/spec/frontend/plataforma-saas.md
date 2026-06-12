@@ -137,7 +137,7 @@ Layout de 3 zonas: **mapa** (60–70% da tela), **painel de domínios** (tabs/ac
 
 | Componente | Decisão/Recomendação |
 |---|---|
-| Gateway | **Stripe Billing** como motor de assinatura/medição (suporta Pix; cartão; usage-based nativo; DX) **ou** nacional (Pagar.me/Asaas/Iugu) se boleto for crítico para o ICP — decisão de negócio; a integração fica atrás de uma interface `PaymentProvider` no BFF p/ não casar com gateway |
+| Gateway | **Decisão (2026-06-12): EBANX como processador primário** — contexto LLC Delaware + clientes no Brasil pagando em BRL exige *processamento doméstico* (cartão BR sem habilitação internacional, sem IOF para o cliente, débito funcional, tokenização + retry para recorrência), com liquidação em USD para a LLC. Stripe US (cross-border) fica como caminho secundário p/ clientes fora do BR; PayPal descartado como primário. Integração atrás da interface `PaymentProvider` no BFF. Gatilho de reavaliação: volume > ~R$ 100–150k/mês → estudar CNPJ local + adquirência doméstica direta (corta spread e habilita NFS-e própria) |
 | Nota fiscal | Emissão NFS-e via integrador (eNotas/NFE.io) disparada por fatura paga — obrigatório Brasil |
 | Metering | Eventos de consumo (`run.completed`, `matricula.processed`, `llm.high.used`) publicados pelo BFF → agregação por período → invoice items |
 | Cotação Premium | Objeto `quote` persistido: insumos (n matrículas, preço unitário vigente, estimativa LLM), validade 7 dias, aceite com identidade do aprovador (auditoria), execução vinculada ao quote |
