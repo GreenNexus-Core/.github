@@ -24,17 +24,19 @@ Princípios de produto:
 | Formulários | react-hook-form + Zod | Validação compartilhada com schemas canônicos |
 | Design system | **Tailwind + shadcn/ui (Radix)** + tokens próprios GN | Controle total de identidade, a11y via Radix, custo zero de licença |
 | Gráficos | Recharts (dashboards) + visx p/ séries temporais do geoanalysis | |
-| **Mapa** | **MapLibre GL JS** (não Leaflet) + protocolo `pmtiles` + deck.gl *apenas* p/ COG/heatmaps do geoanalysis | Ver §6.1 |
+| **Mapa** | **Engine abstraction** (`packages/map`, API neutra): **MapLibre GL primário** (vetor, PMTiles, GeoJSON) + **adapter Leaflet exclusivo para WMS** + deck.gl p/ COG/heatmaps — decisão validada no landanalysis F2.1 | Ver §2.1 |
 | Realtime | SSE nativo (consolidate já emite) com reconexão + fallback polling | Vocabulário de eventos já existe (`consolidate.dispatch.*`) |
 | Telemetria | OpenTelemetry web + App Insights; product analytics (PostHog self-host) | Funil pesquisa→laudo→upgrade é a métrica do negócio |
 | i18n | pt-BR base, en preparado (`packages/i18n`) | Já havia padrão no landanalysis |
 | Testes | Vitest + Testing Library; Playwright e2e (fluxo central como smoke obrigatório de CI) | |
 
-### 2.1 Por que MapLibre e não Leaflet
-- **PMTiles é cidadão de primeira classe** (protocolo `pmtiles://` em tile vetorial) — o backend já publica PMTiles (`tiles` schema, geoanalysis-tiles); em Leaflet seria plugin raster/limitado.
-- **Estilo dirigido por dados**: tipo de linha (`line-dasharray`), espessura (`line-width`), cor (`line-color`), transparência (`fill-opacity`/`line-opacity`) são propriedades nativas da spec de estilo — o painel de configuração de camadas (§6.3) vira um editor direto de paint properties, com expressões por atributo (ex.: cor por `nome_tema`).
-- GPU/vetor: dezenas de camadas de sobreposição com 60fps; rotação/pitch; labels colisionáveis.
-- Leaflet permanece aceitável apenas para um eventual widget embarcável ultraleve (fora de escopo v1).
+### 2.1 Estratégia de engine — lição aprendida do landanalysis (F2.1)
+**MapLibre "puro" não cobre o caso GN** — conclusão já validada nas discussões do gn-web-landanalysis: parte das sobreposições vem de **WMS de órgãos públicos** (catálogo dinâmico via GetCapabilities, CRS fora do EPSG:3857, GetFeatureInfo), e o MapLibre só consome raster pré-tilado em Web Mercator. A decisão comprovada lá (F2.1-01..03, `02-monorepo-layout.md`) é a que esta plataforma adota e evolui:
+
+- **`packages/map` com API neutra** (`<MapCanvas engine="maplibre|leaflet">`): **MapLibre primário** para tudo que é vetorial — PMTiles (`pmtiles://`), GeoJSON do snapshot, clique/identify, e o editor de estilo, já que `line-dasharray`/`line-width`/`line-color`/`*-opacity` são paint properties nativas com expressão por atributo (ex.: cor por `nome_tema`).
+- **Adapter Leaflet exclusivo para WMS** (chunk lazy ~43KB, carrega só quando a rota usa) — `<WmsLayer/>` só roda em engine leaflet, como no `@gn/maps` do landanalysis. Portar esse pacote (componentes e testes existentes) em vez de reescrever.
+- **Plano de convergência** (para o Leaflet morrer um dia, como já era o intent F3+): cada fonte WMS recorrente migra para o pipeline DETL→PMTiles/COG; para WMS de uso eventual, avaliar tile-proxy de reprojeção (WMS→XYZ 3857) no BFF. Critério de aposentadoria do adapter: zero camadas WMS no catálogo.
+- deck.gl apenas para COG/heatmaps do geoanalysis.
 
 ## 3. Modelo de produto — tiers e entitlements
 
@@ -91,6 +93,7 @@ Layout de 3 zonas: **mapa** (60–70% da tela), **painel de domínios** (tabs/ac
 |---|---|---|
 | Geometrias da propriedade e temas do imóvel | GeoJSON do snapshot | `geojson` source MapLibre |
 | Camadas nacionais (sobreposições: TI, UC, assentamentos, embargos, mineração, massa d'água, florestas públicas…) | **PMTiles vetorial** (pipeline DETL `tiles` já existe) | `vector` source via protocolo pmtiles |
+| Camadas WMS legacy/externas (geoservers de órgãos, catálogo dinâmico) | WMS GetMap/GetCapabilities | **Adapter Leaflet** (`<WmsLayer/>`) até migração p/ PMTiles/COG (§2.1) |
 | Heatmaps/índices do geoanalysis (NDVI etc.), contornos | COG + contours (endpoints `/heatmaps/...` já existem) | raster tiles ou deck.gl BitmapLayer |
 | Basemaps | OSM vetorial (estilo próprio) + satélite (provider a contratar) | style switcher |
 

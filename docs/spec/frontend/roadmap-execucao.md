@@ -30,12 +30,13 @@
 
 | ID | Atividade | Tam. | Pred. | Libera | Paralela com |
 |---|---|---|---|---|---|
-| MAP-1 | `packages/map`: wrapper MapLibre, protocolo pmtiles, basemap próprio, controles padrão | M | FND-2 | MAP-2..6, FLX-3 | FND-3..5 |
+| MAP-1 | `packages/map`: **engine abstraction** (port do `@gn/maps` do landanalysis — MapLibre primário + adapter Leaflet p/ WMS), protocolo pmtiles, basemap, controles | M | FND-2 | MAP-2..7, FLX-3 | FND-3..5 |
 | MAP-2 | Render GeoJSON do snapshot + **fit-bounds animado** + highlight de entrada + multi-unidade | M | MAP-1, FND-3 | FLX-3 | MAP-3 |
 | MAP-3 | Camadas PMTiles nacionais via **catálogo servido** (B-05) — liga/desliga, opacidade, legenda | M | MAP-1, B-05 | MAP-4 | MAP-2 |
 | MAP-4 | **Editor de estilo por camada** (cor, espessura, line-dasharray, transparência, cor por atributo) + presets por usuário/tenant | G | MAP-3 | — (feature standalone) | FLX-4..5 |
 | MAP-5 | Interações: hover/clique→ficha do feature, medição, tooltip configurável | M | MAP-2, MAP-3 | FLX-6 | MAP-4 |
 | MAP-6 | Camadas do geoanalysis (COG/heatmaps/contours via deck.gl) + timeline temporal | G | MAP-1, ENT-2 | — | REL-2 |
+| MAP-7 | Convergência WMS→PMTiles/COG (uma fonte por vez via DETL; aposentar adapter Leaflet quando catálogo zerar WMS) | M (contínuo) | MAP-1, MAP-3 | — | qualquer (débito programado) |
 
 ### FLX — Fluxo central (pesquisa → processamento → dossiê)
 
