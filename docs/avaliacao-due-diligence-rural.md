@@ -149,4 +149,72 @@ Apoio: `gn-api-hub-service` (integrador stateless SERPRO/JusBrasil/DirectData; O
 
 ---
 
-*Documento gerado a partir de varredura do código e da documentação de governança da organização; validar itens regulatórios marcados com "verificar" com fonte oficial antes de comprometer roadmap.*
+## Adendo (2026-06-12) — refinamentos após feedback
+
+Correções de estado: JusBrasil é o provider judicial atual no hub (DataJud entra como provider adicional, não substituto); **ONR já contratado/conveniado, desabilitado por custo**; NIRF→CIB entra na lista de acompanhamento regulatório.
+
+### A. DataJud — desenho do provider
+
+A API pública do DataJud (Res. CNJ 331/2020) é um índice de **metadados processuais por tribunal**, consultado via `_search` (sintaxe Elasticsearch). Limitação central: **não indexa CPF/CNPJ** nos campos pesquisáveis (LGPD) e a busca por nome de parte é inconsistente entre tribunais. Desenho recomendado:
+
+- **Descoberta** (CPF/CNPJ → lista de processos): permanece com JusBrasil (ou Escavador como segundo provider).
+- **Enriquecimento e validação** (nº CNJ → classe, assuntos, movimentos, grau, órgão julgador): DataJud, gratuito e oficial. Todo processo vindo do JusBrasil ganha um "carimbo DataJud" (existe/ativo/última movimentação) — barateia o refresh contínuo e dá fonte oficial ao laudo.
+- Classificar processos por tema (possessória, ambiental, execução fiscal, **trabalhista/JT**) e por vínculo (pessoa × imóvel) no domínio `legal`.
+
+### B. ONR — habilitar com controle de custo
+
+Não reativar como domínio automático do consolidate. Tratar como **domínio premium on-demand**:
+
+1. **Gating por perfil**: só dispara em `evaluation_profile = transação | financiamento` (ou clique explícito "puxar matrícula"), nunca no run padrão.
+2. **Pré-qualificação gratuita**: usar `serpro_ccir.areas_registradas[]` (matrícula/transcrição, CNS, livro/ficha) + campo `matricula` do SIGEF para decidir *quais* matrículas pedir — pedir 1 certidão certa, não N.
+3. **Cache por validade legal**: certidão de matrícula tem validade de 30 dias — reutilizar dentro da janela (content-addressed por CNS+matrícula+data); visualização (mais barata) para triagem, certidão só quando a finalidade exige fé pública.
+4. **Repasse de custo**: precificar o relatório "com registral" como tier separado; quota por tenant + aprovação na UI.
+5. O PDF vira evidência content-addressed e alimenta a extração estruturada (bloco `registral` proposto no §3.1).
+
+### C. NIRF → CIB
+
+Adicionado ao backlog regulatório: acompanhar a transição CAFIR→CIB (SINTER/Receita) e o CNIR; modelar a chave do imóvel fiscal como `{tipo: nirf|cib, valor}` desde já para não quebrar schema quando a mudança ocorrer.
+
+### D. Legal RAG — plano de evolução (maior alavanca)
+
+Ordem de ataque sugerida:
+
+1. **Harness de avaliação primeiro** (pré-requisito de tudo): golden set de ~100–200 pares pergunta→normas/artigos esperados, métricas de context precision/recall e faithfulness (estilo RAGAS), rodando em CI. Sem isso, qualquer troca de embedding/chunking é fé.
+2. **Chunking norma-aware**: chunk = unidade citável (artigo/parágrafo/inciso) com metadados hierárquicos (lei → capítulo → artigo) e identificador canônico (padrão LexML URN). O retrieval passa a devolver citações verificáveis, não trechos soltos.
+3. **Vigência e relações**: grafo norma→norma (revoga, altera, regulamenta) em Postgres + flag de vigência por chunk; recuperar o decreto regulamentador junto da lei; nunca citar norma revogada sem marcar. Texto compilado do Planalto como fonte preferencial.
+4. **Retrieval híbrido + rerank**: BM25/tsvector + denso (pgvector HNSW) com fusão RRF; reranker cross-encoder (ou LLM-rerank barato) no top-50→top-10. O `query_builder` multi-dimensão atual vira o estágio de query expansion.
+5. **Corpus**: jurisprudência (súmulas/teses STF-STJ — já apontado como faltante no legal-advisor), normas estaduais das UFs prioritárias, resoluções CMN/BCB (crédito rural) e circulares SUSEP (seguro) — são essas que dão o "para quê" do laudo.
+6. **Embeddings**: avaliar no golden set (não trocar por moda): bge-m3 (open) vs voyage/text-embedding-3-large; dimensão reduzida se custo de índice pesar.
+
+### E. ANA e CPRM/SGB
+
+- **ANA/SNIRH**: CNARH (cadastro de usuários de recursos hídricos) + REGLA (outorgas federais) via dados abertos/geoserviços SNIRH (mesmo padrão WFS já usado para `massa_dagua` e PRODES/DETER — validar endpoint exato no catálogo de metadados SNIRH). Cruzamentos de alto valor: outorga × ponto de captação dentro do imóvel; **irrigação detectada pelo geoanalysis sem outorga correspondente**.
+- **CPRM/SGB**: (a) **SIAGAS** — poços tubulares cadastrados; cruzar poço dentro do imóvel × outorga/cadastro de uso → flag "captação subterrânea sem registro"; (b) **GeoSGB** — geologia, hidrogeologia (potencial de aquífero), suscetibilidade a movimento de massa/inundação (relevante para seguro rural) via WMS/WFS; complementa o SIGMINE no domínio mineral.
+- Dono sugerido (ADR-PLAT-026): geoespacial por geometria → `geoanalysis`; cadastros transacionais (CNARH por CPF/CNPJ) → `hub`.
+
+### F. Sanções trabalhistas — estratégia composta (não depender da planilha)
+
+A "lista suja" (Cadastro de Empregadores, hoje regido pela Portaria Interministerial 18/2024) é mesmo só uma planilha semestral (~613 empregadores em abr/2026; nome sai após 2 anos). Sozinha, cobertura baixíssima. O caminho viável é um **índice de risco trabalhista composto**, por CPF/CNPJ das entidades já presentes no snapshot:
+
+| Sinal | Fonte | Confiabilidade | Acesso |
+|---|---|---|---|
+| **CNDT** (Certidão Negativa de Débitos Trabalhistas) | TST | Alta — documento oficial com código de validação | Emissão automatizável por CPF/CNPJ; é o instrumento com valor legal (usado em licitação/crédito) |
+| Lista suja | MTE | Alta, cobertura baixa | XLSX semestral → ingerir como **ledger temporal** (first_seen/last_seen por publicação, nunca lookup pontual) |
+| Processos na Justiça do Trabalho | JusBrasil (descoberta) + DataJud-JT (validação) | Média-alta | Já existe a infra; classificar por classe/assunto trabalhista |
+| CEIS/CNEP/CEPIM | API Portal da Transparência | Alta | REST com API key gratuita |
+| TACs e ACPs do MPT | Consulta pública MPT | Média | Scraping/monitoramento |
+| Regularidade FGTS (CRF) | Caixa | Alta (só PJ) | Consulta pública por CNPJ |
+
+Regra de produto: o laudo declara **cada sinal separadamente com fonte e data-base** ("CNDT negativa em DD/MM; ausente da lista suja vigente de DD/MM; 2 reclamatórias ativas na JT") — nunca um booleano "sem risco trabalhista". A CNDT é o quick win com lastro jurídico; a lista suja vira histórico versionado, não verdade única.
+
+### G. Preparação de dados para o LLM (anti-alucinação)
+
+Princípio: **o LLM não decide nem calcula — narra e fundamenta**. Camadas:
+
+1. **Fact pack determinístico**: antes do LLM, um compilador transforma o snapshot em fatos atômicos com ID estável, valor, fonte e data-base (`F-012: embargo IBAMA ativo desde 2021-03-15 | fonte: DD/IBAMA | data-base: 2026-06-10`). Todos os números pré-calculados (déficits, percentuais, batimentos de área) — o modelo nunca faz aritmética.
+2. **Rule engine antes do LLM**: hard-stops e severidades saem de regras versionadas (estende o padrão `legal_thresholds` do geoanalysis a todos os domínios); o LLM recebe veredito + evidência e produz narrativa e fundamentação.
+3. **Saída estruturada validada**: schema fechado (structured outputs / `output_config.format` na Anthropic, equivalente no Azure OpenAI) com `findings[].fact_ids[]` e `findings[].norm_references[]` obrigatórios; pós-validação determinística rejeita/reprocessa qualquer claim cujo fact_id não exista, cujo número não bata com o fact pack (whitelist de numerais) ou cuja norma/artigo não exista no índice do RAG.
+4. **Citations nativas**: no caminho Anthropic, passar o fact pack e os trechos normativos como blocos `document` com `citations: {enabled: true}` — o modelo devolve citações ancoradas por offset no documento fonte, verificáveis mecanicamente (no Azure OpenAI, emular via fact_ids).
+5. **Disciplina de nulos**: campo por dimensão `status ∈ {avaliado, nao_avaliado_falta_dado}` ligado ao `skipped_stages` existente; o prompt proíbe inferir o que não está no fact pack — "não avaliado" é resposta válida e obrigatória.
+6. **Golden set de laudos**: snapshots dourados → findings esperados; regressão em CI a cada mudança de prompt/modelo/tier (ADR-PLAT-029), com métrica explícita de taxa de claim não-citado.
+7. Prompt caching (já em uso) favorece esse desenho: system prompt + corpus normativo estável primeiro, fact pack volátil por último.
